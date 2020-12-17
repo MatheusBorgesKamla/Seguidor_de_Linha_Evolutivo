@@ -11,8 +11,58 @@ extern "C"
 #include <string.h>
 #include <unistd.h>
 #include <fstream>
+#include <bits/stdc++.h> 
 
 using namespace std;
+
+vector<Robo> Le_Individuos(char **file_name, int *geracao_ini)
+{
+    vector<Robo> robos;
+    //CARREGA POPULACAO DO TXT PASSADO COMO PARAMETRO
+    ifstream txtfile (file_name[1]);
+    string line;
+    int cont = 0;
+    if(txtfile.is_open())
+    {
+        cout << "Carregando individuos ..." << endl;
+        while (getline(txtfile,line))
+        {
+            if(line == "INDIVIDUOS GERADOS" || cont>0)
+            {
+                cont++;
+                if(cont >= 25)
+                    break;
+                if(line != "INDIVIDUOS GERADOS")
+                {
+                    //cout << line << endl;
+                    vector <string> tokens; 
+                    stringstream check1(line);
+                    string intermediate;
+                    while(getline(check1, intermediate, ' ')) 
+                    { 
+                        tokens.push_back(intermediate); 
+                    }
+                    double vel, Kp, Ki, Kd;
+                    vel = stod(tokens[0]);
+                    Kp = stod(tokens[1]);
+                    Ki = stod(tokens[2]);
+                    Kd = stod(tokens[3]);
+                    robos.push_back(Robo(Kp, Ki, Kd, vel));
+                    //cout << "V = " << vel << " Kp = " << Kp  << " Ki = " << Ki << " Kd = " << Kd <<  endl;
+                }
+            }
+        }
+        *geracao_ini = stoi(file_name[2]);
+        //cout << argv[2] << endl;
+        txtfile.close();
+        return robos;
+    }
+    else
+    {
+        cout << "Erro ao ler txt, tente novamente!" << endl;
+        exit(-1);
+    }
+}
 
 vector<Robo> inicializa_pop(int pop_tam)
 {
@@ -26,9 +76,9 @@ vector<Robo> inicializa_pop(int pop_tam)
         //Gerando Kps aleatorios entre 0.01 a 10
         Kp = double((1 + rand() % (1000 - 1+1))/100.0);
         //Gerando Kis aleatorios entre 0.0001 a 0.1
-        Ki = double((10 + rand() % (100 - 10+1))/10000.0);
+        Ki = double((1 + rand() % (100 - 1+1))/10000.0);
         //Gerando Kds aleatorios entre 0.0001 a 0.1
-        Kd = double((10 + rand() % (100 - 10+1))/10000.0);
+        Kd = double((1 + rand() % (100 - 1+1))/10000.0);
         /*if(i == 0)
         {
             Kp = 1;
@@ -161,19 +211,33 @@ int main(int argc, char **argv)
     //Tamanho da populacao (quantidade de individuos)
     const int pop_tam = 36;
     //Taxa de mutacao
-    const int mutationRate = 0.1;
+    const float mutationRate = 0.05;
     //Numero de geracoes
     const int N_geracoes = 30;
     //Declarando individuos (robos)
     vector<Robo> robos;
-    //INICIALIZANDO POPULAÇÃO
-    robos = inicializa_pop(pop_tam);
-    //char c;
-    //cin >> c;
 
+    int geracao_ini = 0;
+    if(argc == 3)
+    {
+        robos = Le_Individuos(argv,&geracao_ini);
+        cout << "Individuos carregados com sucesso para geracao " << geracao_ini << endl;
+        /*for (int i = 0; i < robos.size(); i++)
+        {
+            cout << robos[i].velocidadeBase << endl;
+        }
+        char c;
+        cin >> c;*/   
+    }
+    else
+    {
+        //INICIALIZANDO POPULAÇÃO
+        robos = inicializa_pop(pop_tam);    
+    }
+    
     //Robo robo(clientID, 1, 0.0003, 0.008, 10);
 
-    for (int j = 0; j < N_geracoes; j++)
+    for (int j = geracao_ini; j < N_geracoes; j++)
     {
         ofstream checkpoint_file;
         //Declarando vetor que guardará os sobreviventes após cada geração
@@ -228,43 +292,58 @@ int main(int argc, char **argv)
 
         }
         fitness_med = fitness_med/robos.size();
-        //cout << "Tam robos: " << robos.size() << " Tam sobreviventes: " << sobreviventes.size() << endl;
-        GuardaMelhor(sobreviventes, robos);
-        //cout << "Tam robos: " << robos.size() << " Tam sobreviventes: " << sobreviventes.size() << endl;
-        //APÓS TODOS OS INDIVÍDUOS TEREM SUA PONTUAÇÃO DE APTIDÃO É REALIZADO A SELEÇÃO NATURAL PELO MÉTODO TORNEIO DE 2
-        Torneio(sobreviventes, robos, 11);
-        //cout << "Tam robos: " << robos.size() << " Tam sobreviventes: " << sobreviventes.size() << endl;
+
+        //APÓS TODOS OS INDIVÍDUOS TEREM SUA PONTUAÇÃO DE APTIDÃO É REALIZADO A SELEÇÃO NATURAL
+
+        //GUARDA OS 4 MELHORES FITNESS
+        for(int i=0; i<4; i++)
+            GuardaMelhor(sobreviventes, robos);
+
+        //6 SOBREVIVENTES SÃO SELECIONADOS PELO MÉTODO TORNEIO DE 2
+        Torneio(sobreviventes, robos, 8);
+
         //OS SOBREVIVENTES REALIZAM CROSSOVER A FIM DE GERAR NOVA POPULACAO
-        cout << "CROSSOVER: " << endl;
+
         vector<Robo> nova_pop = CrossoverPop(sobreviventes);
-        cout << "Tam sobreviventes: " << sobreviventes.size() << " Tam nova pop: " << nova_pop.size() << endl;
-        /*cout << "INDIVIDUOS GERADOS" << endl;
-        for (int i = 0; i < nova_pop.size(); i++)
-        {
-            nova_pop[i].GetInfo();
-        }
+ 
         //OS INDIVIDUOS GERADOS SOFREM MUTACAO
-        cout << "MUTACAO" << endl;*/    
+      
         MutaPop(nova_pop, mutationRate);
-        /*for (int i = 0; i < nova_pop.size(); i++)
-        {
-            nova_pop[i].GetInfo();
-        }*/
-        robos = nova_pop;
+        
         cout << "\n\n--------- Melhor individuo: ------------ \n" ;
-        robos[0].GetInfo();
-        cout << "Fitness: " << robos[0].fitness << endl;
+        nova_pop[0].GetInfo();
+        cout << "Fitness: " << nova_pop[0].fitness << endl;
         cout << "----------------------------------\n";
         cout << "Fitness Medio: " << fitness_med << " Geracao: " << j << endl;
+
         string file_name = "../checkpoints/geracao" + to_string(j) + ".txt";
         checkpoint_file.open(file_name);
+
+        checkpoint_file << "INDIVIDUOS\n";
+        for (int i = 0; i < robos.size(); i++)
+        {
+            checkpoint_file << robos[i].velocidadeBase << " " << robos[i].Kp << " " << robos[i].Ki << " " << robos[i].Kd << " " << robos[i].fitness << "\n";
+        }
+
+        checkpoint_file << "SOBREVIVENTES\n";
+        for (int i = 0; i < sobreviventes.size(); i++)
+        {
+            checkpoint_file << sobreviventes[i].velocidadeBase << " " << sobreviventes[i].Kp << " " << sobreviventes[i].Ki << " " << sobreviventes[i].Kd << " " << sobreviventes[i].fitness << "\n";
+        }
+
+        checkpoint_file << "INDIVIDUOS GERADOS\n";
         for (int i = 0; i < nova_pop.size(); i++)
         {
             checkpoint_file << nova_pop[i].velocidadeBase << " " << nova_pop[i].Kp << " " << nova_pop[i].Ki << " " << nova_pop[i].Kd << "\n";
         }
-        checkpoint_file << robos[0].fitness << "\n";
+
+        checkpoint_file << "MELHOR FITNESS\n";
+        checkpoint_file << nova_pop[0].fitness << "\n";
+        checkpoint_file << "FITNESS MEDIO\n";
         checkpoint_file << fitness_med << "\n";
         checkpoint_file.close();
+
+        robos = nova_pop;
     }
     return 0;
 }

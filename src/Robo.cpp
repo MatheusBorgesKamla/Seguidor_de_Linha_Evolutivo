@@ -347,27 +347,29 @@ Robo Robo::Crossover(Robo parceiro)
 void Robo::Mutacao(float taxa_mutacao)
 {
   float r = double((rand() % 100)/100.0);
+  //cout << "mut_rate: " << taxa_mutacao << endl;
+  //cout << "r: " << r << endl;
   const float f = 0.5;
   double velocidade_acresc = double((500 + rand() % (2000 - 500+1))/100.0);
-
+  //cout << "vel: " << velocidade_acresc << endl;
   double Kp_acresc = double((1 + rand() % (1000 - 1+1))/100.0);
-  
+  //cout << "kp: " << Kp_acresc << endl;
   double Ki_acresc = double((10 + rand() % (100 - 10+1))/10000.0);
-  
+  //cout << "ki: " << Ki_acresc << endl;
   double Kd_acresc = double((10 + rand() % (100 - 10+1))/10000.0);
-
+  //cout << "kd: " << Kd_acresc << endl;
   if(r > f)
   {
     this->Kp += Kp_acresc*taxa_mutacao;
-    this->Kd += Kp_acresc*taxa_mutacao;
-    this->Ki += Kp_acresc*taxa_mutacao;
+    this->Kd += Kd_acresc*taxa_mutacao;
+    this->Ki += Ki_acresc*taxa_mutacao;
     this->velocidadeBase += velocidade_acresc*taxa_mutacao;
   }
   else
   {
     this->Kp -= Kp_acresc*taxa_mutacao;
-    this->Kd -= Kp_acresc*taxa_mutacao;
-    this->Ki -= Kp_acresc*taxa_mutacao;
+    this->Kd -= Kd_acresc*taxa_mutacao;
+    this->Ki -= Ki_acresc*taxa_mutacao;
     this->velocidadeBase -= velocidade_acresc*taxa_mutacao;
   }
   
