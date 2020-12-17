@@ -20,7 +20,11 @@ A organização atual do repositório segue a seguinte estrutura:
 - **checkpoints** : diretório utilizado para salvar checkpoints do algoritmo genético, salvando os indivíduos sobreviventes para cada geração em uma linha do arquivo txt, salvando também o fitness do melhor indivíduo e também o fitness médio da população daquela geração nas últimas duas linhas.
 
 ### Como usar:
-- Clone o repositório e entre na pasta **build**, onde ficará os arquivos de configuração CMake: 
+- Clone o repositório crie a pasta **build**, onde ficará os arquivos de configuração CMake:
+```console
+username@user-computer:~$ cd Seguidor_de_Linha_Evolutivo/ && mkdir build
+```
+- Entre na pasta build:
 ```console
 username@user-computer:~$ cd Seguidor_de_Linha_Evolutivo/build
 ```
@@ -40,3 +44,8 @@ username@user-computer:~/Open_2020/build$ make
 ```console
 username@user-computer:~/Open_2020/build$ ./Executable
 ```
+- Dessa forma o AG irá rodar da geração 0 inicializando so indíviduos aleatoriamente, para começar de uma certa geração faça:
+```console
+username@user-computer:~/Open_2020/build$ ./Executable ../checkpoints/geracao10.txt 11
+```
+- Assim seria iniciado da geração 11 lendo os indivíduos gerados na geração 10
