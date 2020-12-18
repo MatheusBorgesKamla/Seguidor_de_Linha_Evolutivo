@@ -1,14 +1,22 @@
 # Projeto Seguidor de Linha Evolutivo
 
 ### Descrição
-Repositório utilizado para o projeto desenvolvido na disciplina **SSC0713 - Sistemas Evolutivos e Aplicados à Robótica** que consiste na implementação de um algoritmo genético para a otimização do controlador PID de um robô do tipo seguidor de linha utilizando o simulador de robótica **Coppelia Sim**. O modelo do robô utilizado na simulação possui duas rodas com motores como atuadores e uma roda central boba do tipo caster. Para a detecção da linha, foi utilizado 5 sensores com os quais é realizado a detecção do estado de posição do robô perante a linha, gerando assim um valor de erro o qual o intuito é anular utilizando um controlador PID para o controle dos motores. Dessa forma, o projeto consistiu em realizar a otimização dos parâmetros Kp, Ki e Kd do controlador PID e também da velocidade base do robô utilizando um AG (algoritmo genético). Mais informações sobre o projeto e a implementação são explicados na apresentação em vídeo.
+Repositório utilizado para o projeto desenvolvido na disciplina **SSC0713 - Sistemas Evolutivos e Aplicados à Robótica** que consiste na implementação de um algoritmo genético para a otimização do controlador PID de um robô do tipo seguidor de linha utilizando o simulador de robótica **Coppelia Sim**. O modelo do robô utilizado na simulação possui duas rodas com motores como atuadores e uma roda central boba do tipo caster. Para a detecção da linha, foi utilizado 5 sensores com os quais é realizado a detecção do estado de posição do robô perante a linha, gerando assim um valor de erro o qual o intuito é anular utilizando um controlador PID para o controle dos motores. Dessa forma, o projeto consistiu em realizar a otimização dos parâmetros Kp, Ki e Kd do controlador PID e também da velocidade base do robô utilizando um AG (algoritmo genético). Mais informações sobre o projeto e a implementação são explicados na apresentação em vídeo abaixo.
 
+[![Watch the video](https://github.com/MatheusBorgesKamla/Seguidor_de_Linha_Evolutivo/blob/main/video/tumbvideo.png)](https://youtu.be/zv-YFKnZtWY)
 
 ### Requisitos Mínimos:
 Os requisitos para conseguir compilar e executar as implementações são:
 - CMake Version 2.6
 - C11 Standard Version
 - Coppelia Sim
+
+### Instalação:
+- Siga o seguinte tutorial de instalação do **CMake**: https://howtoinstall.co/pt/ubuntu/xenial/cmake
+- Site para download do software de simulação: https://www.coppeliarobotics.com/ .Baixe a versão EDU, extraia a pasta CoppeliaSim_Edu_V4_0_0_Ubuntu16_04, entre nela e execute o shell script para inicializar a simulação:
+```console
+username@user-computer:~/CoppeliaSim_Edu_V4_0_0_Ubuntu16_04$ ./coppeliaSim.sh 
+```
 
 ### Organização:
 A organização atual do repositório segue a seguinte estrutura:
@@ -36,7 +44,7 @@ username@user-computer:~/Open_2020/build$ cmake ..
 ```console
 username@user-computer:~/Open_2020/build$ make
 ```
-- Abra a simulação **CenarioV6.ttt** no CoppeliaSim
+- Abra a simulação **Seguidor_Cenário.ttt** no CoppeliaSim
 
 - Aperte em START/RESUME para iniciar a simulação
 
@@ -49,3 +57,7 @@ username@user-computer:~/Open_2020/build$ ./Executable
 username@user-computer:~/Open_2020/build$ ./Executable ../checkpoints/geracao10.txt 11
 ```
 - Assim seria iniciado da geração 11 lendo os indivíduos gerados na geração 10
+
+### Resultados
+Em poucas gerações já houve uma nítida evolução dos indivíduos:
+![Alt Text](https://github.com/MatheusBorgesKamla/Seguidor_de_Linha_Evolutivo/blob/main/video/final_5fdcad3fef830401119b544e_156279.gif)
